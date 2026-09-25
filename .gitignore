@@ -1,0 +1,40 @@
+# ---- Data ----
+# The PhysioNet 2019 files are freely redistributable (CC BY 4.0) but ~40k files, so the
+# repo stays lean and reproducible-by-script instead: src/download_data.py re-fetches
+# them. Derived data is regenerable, so it is ignored too.
+# NOTE: `data/*` not `data/` — git will not re-include a file inside an excluded
+# *directory*, so an ignored `data/` would make the `!` exception below dead.
+data/*
+!data/README.md
+
+# ---- Models / artifacts ----
+models/
+*.pt
+*.pth
+*.pkl
+*.joblib
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# ---- Notebooks ----
+# Stripped outputs keep diffs reviewable; checkpoints are noise.
+.ipynb_checkpoints/
+
+# ---- Tooling / OS ----
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store

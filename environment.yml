@@ -1,0 +1,26 @@
+# Recreate with:  conda env create -f environment.yml
+#
+# Versions are left loose on purpose - a portfolio project meant to still build a year
+# from now. Exact resolved versions for reported results go in environment.lock.yml.
+name: sepsis
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12          # not 3.13: broader wheel coverage across the sci stack
+  - pandas
+  - numpy
+  - scipy
+  - scikit-learn
+  - xgboost
+  - matplotlib
+  - seaborn
+  - pyarrow              # parquet for data/interim and data/processed
+  - jupyterlab
+  - ipykernel
+  - pip
+  - pip:
+      # CPU-only PyTorch. This laptop has AMD integrated graphics: no CUDA, and ROCm is
+      # Linux-only. A GRU over ~40 variables x ~40 hours per patient is small enough for
+      # 6 CPU cores; if it is not, that will be measured, not assumed.
+      - --index-url https://download.pytorch.org/whl/cpu
+      - torch
