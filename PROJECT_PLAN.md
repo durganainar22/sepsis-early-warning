@@ -20,8 +20,8 @@ per-row tabular model cannot. This project asks that question under the same rul
 | # | Step | Status |
 |---|---|---|
 | 0 | Setup: environment, download, one combined table | done — `src/download_data.py`, `src/build_table.py` |
-| 1 | Data audit and exploration | next |
-| 2 | Cohort, labels, prediction times, splits | |
+| 1 | Data audit and exploration | done — `notebooks/01_data_audit.ipynb` |
+| 2 | Cohort, labels, prediction times, splits | next — starts with the 7 decisions listed at the end of notebook 01 |
 | 3 | Features for the tabular models | |
 | 4 | Baselines: logistic regression, XGBoost | |
 | 5 | Deep learning: GRU on the hourly sequence | |
