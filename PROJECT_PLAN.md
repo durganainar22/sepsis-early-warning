@@ -21,8 +21,8 @@ per-row tabular model cannot. This project asks that question under the same rul
 |---|---|---|
 | 0 | Setup: environment, download, one combined table | done — `src/download_data.py`, `src/build_table.py` |
 | 1 | Data audit and exploration | done — `notebooks/01_data_audit.ipynb` |
-| 2 | Cohort, labels, prediction times, splits | next — starts with the 7 decisions listed at the end of notebook 01 |
-| 3 | Features for the tabular models | |
+| 2 | Cohort, labels, prediction times, splits | done — `src/make_cohort.py` |
+| 3 | Features for the tabular models | next |
 | 4 | Baselines: logistic regression, XGBoost | |
 | 5 | Deep learning: GRU on the hourly sequence | |
 | 6 | Honest benchmark — the only look at the test hospital | |
@@ -75,7 +75,48 @@ routinely lose performance when moved between hospitals (different patients, dif
 lab-ordering habits, different charting). A random split mixing both hospitals would
 hide that. Exact within-A proportions are a Step 2 decision.
 
+**Within hospital A — agreed 2026-09-26:** 70 / 15 / 15 train / validation / internal test,
+split by patient, stratified on whether the patient ever develops sepsis, fixed seed.
+After the Step 2 cohort rule this gives 13,950 / 2,990 / 2,990 patients with 968 / 208 / 208
+septic (~2% of scored hours positive in each). 208 septic patients is on the small side for
+a stable PR-AUC, which is one more reason the paired bootstrap in Step 6 is not optional. Hospital B is not split: all of it is the external test.
+
 **Rule, in force from now:** no analysis in Steps 1–5 reads hospital B's labels. Step 1
 may describe B's *inputs* (missingness, ranges) at a summary level, because that is
 what a deploying hospital would know before go-live; B's sepsis rate and outcomes stay
 unread until Step 6.
+
+## Step 2 decisions — agreed 2026-09-26
+
+Each traces to a numbered finding at the end of `notebooks/01_data_audit.ipynb`.
+
+1. **Score from hour 6.** Predictions are only scored from each patient's 7th row onward
+   (row index ≥ 6, i.e. after 6 hours of data). Patients whose label switches on before
+   row 6 are excluded — 406 patients in hospital A. One rule for everyone: the model is
+   never judged on a patient it has had no time to observe, and the benchmark measures
+   early *warning*, not detection of sepsis that is already present. Every record has at
+   least 8 rows, so no non-septic patient loses all scored hours.
+   *Consequence for hospital B:* this rule reads labels, so it is applied to B only
+   inside the Step 6 benchmark, never before.
+   Rejected: excluding only first-row cases (still rewards near-present detection);
+   keeping everyone (the official challenge setting — most comparable, least honest).
+2. **Causal features only.** Every feature at hour *t* uses data from hours ≤ *t*. No
+   whole-stay summaries: septic records end 9 h after the label switches on, so record
+   length alone would leak the outcome.
+3. **Time in ICU comes from `ICULOS`,** never the row index (they differ for ~37% of
+   patients).
+4. **Missing values are information, not noise:** carry the last value forward, plus
+   "hours since last measured" and "measured yet" per variable. No mean imputation.
+   Lactate and FiO2 are measured ~1.9× as often before sepsis; imputation would erase that.
+5. **Drop the 7 variables recorded in < 1% of hours at either hospital** — EtCO2,
+   BaseExcess, HCO3, Chloride, Bilirubin_direct, TroponinI, Fibrinogen — before any model
+   sees them. 27 measurements remain. Uses hospital B's *input* rates only, which a
+   deploying hospital would know before go-live. Rejected: keeping all 34 (the external
+   test would partly measure a mistake any deploying team would have avoided).
+6. **Impossible values → missing,** by the documented limits in `src/make_cohort.py`.
+   MAP/SBP/DBP disagreement (~1% of hours) is left as recorded: it is an effect of hourly
+   summarising (arterial line vs cuff), not an error.
+7. **PR-AUC on scored hourly predictions decides the comparison.** The challenge's
+   normalised utility score is reported alongside, with its alarm threshold tuned on
+   hospital A validation only. Rejected: utility as the decider (threshold-dependent, so
+   the ranking could flip with the cutoff).
