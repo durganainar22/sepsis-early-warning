@@ -128,3 +128,17 @@ Each traces to a numbered finding at the end of `notebooks/01_data_audit.ipynb`.
 - **ICU type kept with an explicit "unknown" level** (medical / surgical / unknown).
   Missing for ~47% of patients; missingness may itself carry meaning, and nothing is
   invented.
+
+## Step 4 decisions — agreed 2026-09-26
+
+- **No class reweighting.** Train on the natural ~2% positive hours; the alarm threshold
+  for the utility score is tuned on hospital A validation. Same as the readmission
+  project, applied identically to all three models including the GRU, so the benchmark
+  compares architectures rather than imbalance handling, and probabilities stay
+  calibrated.
+- **XGBoost search: 40 configurations × 3 seeds**, selected on mean val PR-AUC, winner
+  re-run over 5 seeds. The same protocol the readmission project adopted after measuring
+  the winner's curse of single-seed selection. ~2.5 h on 6 CPU cores. The GRU gets a
+  comparable budget in Step 5.
+- **Rows within a patient are not independent.** Every uncertainty estimate (Step 6
+  bootstrap) resamples *patients*, never hours.

@@ -1,0 +1,200 @@
+{
+  "model": "logreg_l2",
+  "best_C": 0.01,
+  "val": {
+    "pr_auc": 0.11258320262619533,
+    "roc_auc": 0.8341899867406436,
+    "brier": 0.01860790432574457,
+    "base_rate": 0.019877073401363226,
+    "n_hours": 101524,
+    "threshold": 0.027263295432965958,
+    "utility": 0.43340481977473827,
+    "alarm_rate": 0.188950395965486,
+    "precision_at_threshold": 0.07105249439607986,
+    "recall_at_threshold": 0.6754212091179386
+  },
+  "sweep": [
+    {
+      "C": 0.0001,
+      "pr_auc": 0.10725245928889626,
+      "roc_auc": 0.8383762466465411,
+      "brier": 0.018608853485226583,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.00031622776601683794,
+      "pr_auc": 0.10815382016961927,
+      "roc_auc": 0.8384035320807882,
+      "brier": 0.018621402259959254,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.001,
+      "pr_auc": 0.10931050508460365,
+      "roc_auc": 0.837176384740021,
+      "brier": 0.01863113656760326,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.0031622776601683794,
+      "pr_auc": 0.11138567414777069,
+      "roc_auc": 0.8361592540689161,
+      "brier": 0.01861387749034532,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.01,
+      "pr_auc": 0.11258320262619533,
+      "roc_auc": 0.8341899867406436,
+      "brier": 0.01860790432574457,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.03162277660168379,
+      "pr_auc": 0.11162397346554692,
+      "roc_auc": 0.8326086964749568,
+      "brier": 0.018622981365912544,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.1,
+      "pr_auc": 0.11236200582057139,
+      "roc_auc": 0.8332438758866222,
+      "brier": 0.018642698032065547,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 0.31622776601683794,
+      "pr_auc": 0.11139429378358338,
+      "roc_auc": 0.8320456474209553,
+      "brier": 0.01862677519264537,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 1.0,
+      "pr_auc": 0.11178328492897646,
+      "roc_auc": 0.8328375873544747,
+      "brier": 0.018673987922919254,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 3.1622776601683795,
+      "pr_auc": 0.11221431697196277,
+      "roc_auc": 0.8329736659255292,
+      "brier": 0.01867080433436529,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    },
+    {
+      "C": 10.0,
+      "pr_auc": 0.11189265786020286,
+      "roc_auc": 0.8330078486633782,
+      "brier": 0.018670040443995693,
+      "base_rate": 0.019877073401363226,
+      "n_hours": 101524,
+      "converged": true
+    }
+  ],
+  "top_coefficients": [
+    {
+      "feature": "Lactate_measured_yet",
+      "coef": 0.4693470674257735
+    },
+    {
+      "feature": "PTT_measured_yet",
+      "coef": 0.4501977687204935
+    },
+    {
+      "feature": "Calcium_measured_yet",
+      "coef": 0.4445090929033291
+    },
+    {
+      "feature": "Temp_mean_24h",
+      "coef": -0.3987986703476548
+    },
+    {
+      "feature": "Temp_measured_yet",
+      "coef": 0.39604893851702944
+    },
+    {
+      "feature": "ICULOS",
+      "coef": 0.3248838177822643
+    },
+    {
+      "feature": "SBP_measured_yet",
+      "coef": -0.312715670689124
+    },
+    {
+      "feature": "Phosphate_measured_yet",
+      "coef": 0.30755669512707384
+    },
+    {
+      "feature": "Glucose_measured_yet",
+      "coef": -0.30591179073895464
+    },
+    {
+      "feature": "PaCO2_count_24h",
+      "coef": -0.27332412120205174
+    },
+    {
+      "feature": "icu_surgical",
+      "coef": -0.26373311627101237
+    },
+    {
+      "feature": "Bilirubin_total_measured_yet",
+      "coef": 0.26361540519881044
+    },
+    {
+      "feature": "FiO2_hours_since",
+      "coef": -0.2391455430673662
+    },
+    {
+      "feature": "HR_mean_24h",
+      "coef": -0.2231021671241519
+    },
+    {
+      "feature": "Magnesium_measured_yet",
+      "coef": 0.20961034941651327
+    },
+    {
+      "feature": "Temp_max_24h",
+      "coef": 0.20501723132256844
+    },
+    {
+      "feature": "PaCO2_hours_since",
+      "coef": -0.20049185213105353
+    },
+    {
+      "feature": "HR_last",
+      "coef": 0.1852400867648442
+    },
+    {
+      "feature": "Hct_count_24h",
+      "coef": -0.1741732348593009
+    },
+    {
+      "feature": "DBP_last",
+      "coef": -0.17404355254221418
+    }
+  ],
+  "note": "Hospital A val only. lbfgs is deterministic: seed sd is 0 by construction."
+}
