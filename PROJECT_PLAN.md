@@ -22,8 +22,8 @@ per-row tabular model cannot. This project asks that question under the same rul
 | 0 | Setup: environment, download, one combined table | done — `src/download_data.py`, `src/build_table.py` |
 | 1 | Data audit and exploration | done — `notebooks/01_data_audit.ipynb` |
 | 2 | Cohort, labels, prediction times, splits | done — `src/make_cohort.py` |
-| 3 | Features for the tabular models | next |
-| 4 | Baselines: logistic regression, XGBoost | |
+| 3 | Features for the tabular models | done — `src/build_features.py` (164 features, causal by test) |
+| 4 | Baselines: logistic regression, XGBoost | next |
 | 5 | Deep learning: GRU on the hourly sequence | |
 | 6 | Honest benchmark — the only look at the test hospital | |
 | 7 | Interpretation, figures, write-up | |
@@ -120,3 +120,11 @@ Each traces to a numbered finding at the end of `notebooks/01_data_audit.ipynb`.
    normalised utility score is reported alongside, with its alarm threshold tuned on
    hospital A validation only. Rejected: utility as the decider (threshold-dependent, so
    the ranking could flip with the cutoff).
+
+## Step 3 decisions — agreed 2026-09-26
+
+- **Trend windows: 6 h and 24 h.** 6 h matches the warning horizon; 24 h catches slower
+  drifts (e.g. the steady heart-rate climb in notebook 01 §5).
+- **ICU type kept with an explicit "unknown" level** (medical / surgical / unknown).
+  Missing for ~47% of patients; missingness may itself carry meaning, and nothing is
+  invented.
