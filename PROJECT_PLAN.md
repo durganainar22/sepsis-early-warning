@@ -142,3 +142,18 @@ Each traces to a numbered finding at the end of `notebooks/01_data_audit.ipynb`.
   comparable budget in Step 5.
 - **Rows within a patient are not independent.** Every uncertainty estimate (Step 6
   bootstrap) resamples *patients*, never hours.
+
+## Step 5 decisions — agreed 2026-09-26
+
+- **GRU input per hour: value + mask + time-since** for each of the 27 measurements — the
+  last known value (standardized on train; 0 = the train mean before the first
+  measurement), a measured-this-hour flag, and hours since last measured — plus the static
+  context. The same missingness signal XGBoost gets, but raw: the network must learn its
+  own trends instead of being handed them. Rejected: GRU-D (learned decay — more code,
+  harder to tune on CPU, and a different question), and zero-filled values without masks
+  (discards the signal notebook 01 showed matters).
+- **Search budget matches XGBoost: 40 configurations × 3 seeds**, winner re-run over 5
+  seeds. One run is timed first; if the full search is far above XGBoost's ~2.5 h, that is
+  reported before running rather than silently cut.
+- **No hand-built features go into the GRU.** A GRU fed XGBoost's 164 features would blur
+  the one comparison the project exists to make.
