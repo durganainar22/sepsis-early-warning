@@ -1,0 +1,77 @@
+train (466437, 164)  2.01% positive hours | val (101524, 164)
+  [ 1/40] PR-AUC 0.1432 +-0.0023  d=8 lr=0.166 mcw=172.1 sub=0.80 col=0.85 l2=1.9 -> [33, 26, 32] trees, 104s
+  [ 2/40] PR-AUC 0.1347 +-0.0002  d=8 lr=0.050 mcw=20.9 sub=0.57 col=0.92 l2=5.2 -> [125, 87, 46] trees, 169s
+  [ 3/40] PR-AUC 0.1298 +-0.0078  d=6 lr=0.198 mcw=2.9 sub=0.56 col=0.57 l2=4.9 -> [29, 21, 15] trees, 93s
+  [ 4/40] PR-AUC 0.1252 +-0.0047  d=9 lr=0.234 mcw=30.9 sub=0.68 col=0.72 l2=14.2 -> [15, 8, 36] trees, 96s
+  [ 5/40] PR-AUC 0.1093 +-0.0046  d=8 lr=0.220 mcw=3.0 sub=0.51 col=0.74 l2=1.3 -> [28, 33, 17] trees, 107s
+  [ 6/40] PR-AUC 0.1293 +-0.0072  d=7 lr=0.059 mcw=1.6 sub=0.73 col=0.66 l2=1.0 -> [84, 147, 41] trees, 170s
+  [ 7/40] PR-AUC 0.1354 +-0.0079  d=5 lr=0.011 mcw=44.3 sub=0.81 col=0.88 l2=1.7 -> [111, 6, 373] trees, 224s
+  [ 8/40] PR-AUC 0.1490 +-0.0007  d=3 lr=0.074 mcw=95.3 sub=0.98 col=0.93 l2=7.2 -> [131, 94, 104] trees, 164s
+  [ 9/40] PR-AUC 0.1388 +-0.0085  d=5 lr=0.019 mcw=7.9 sub=0.53 col=0.53 l2=2.3 -> [434, 121, 2] trees, 250s
+  [10/40] PR-AUC 0.1397 +-0.0020  d=9 lr=0.025 mcw=55.9 sub=0.82 col=0.67 l2=1.1 -> [201, 55, 92] trees, 202s
+  [11/40] PR-AUC 0.1419 +-0.0023  d=3 lr=0.024 mcw=149.7 sub=0.86 col=0.54 l2=1.4 -> [625, 150, 376] trees, 410s
+  [12/40] PR-AUC 0.1306 +-0.0080  d=6 lr=0.150 mcw=29.0 sub=0.74 col=0.74 l2=21.4 -> [13, 65, 27] trees, 105s
+  [13/40] PR-AUC 0.1154 +-0.0036  d=5 lr=0.250 mcw=10.1 sub=0.71 col=0.34 l2=1.8 -> [51, 34, 20] trees, 100s
+  [14/40] PR-AUC 0.1182 +-0.0082  d=6 lr=0.292 mcw=3.5 sub=0.66 col=0.57 l2=8.8 -> [16, 35, 3] trees, 89s
+  [15/40] PR-AUC 0.1307 +-0.0053  d=6 lr=0.012 mcw=1.2 sub=0.53 col=0.99 l2=1.1 -> [263, 117, 2] trees, 208s
+  [16/40] PR-AUC 0.1411 +-0.0038  d=3 lr=0.027 mcw=163.5 sub=0.77 col=0.92 l2=44.4 -> [460, 76, 99] trees, 256s
+  [17/40] PR-AUC 0.1495 +-0.0028  d=3 lr=0.095 mcw=2.8 sub=0.96 col=0.68 l2=2.8 -> [79, 163, 129] trees, 173s
+  [18/40] PR-AUC 0.1484 +-0.0012  d=4 lr=0.041 mcw=176.2 sub=0.58 col=0.66 l2=14.3 -> [207, 262, 280] trees, 297s
+  [19/40] PR-AUC 0.1408 +-0.0030  d=3 lr=0.014 mcw=151.9 sub=0.55 col=0.85 l2=1.7 -> [198, 407, 67] trees, 264s
+  [20/40] PR-AUC 0.1276 +-0.0021  d=8 lr=0.017 mcw=10.3 sub=0.82 col=0.64 l2=0.6 -> [28, 110, 156] trees, 182s
+  [21/40] PR-AUC 0.1471 +-0.0049  d=4 lr=0.089 mcw=1.1 sub=0.87 col=0.81 l2=7.5 -> [48, 89, 103] trees, 138s
+  [22/40] PR-AUC 0.1345 +-0.0020  d=5 lr=0.052 mcw=1.1 sub=0.61 col=0.43 l2=12.3 -> [160, 285, 241] trees, 285s
+  [23/40] PR-AUC 0.1428 +-0.0066  d=4 lr=0.148 mcw=4.7 sub=0.67 col=0.70 l2=2.0 -> [46, 79, 76] trees, 126s
+  [24/40] PR-AUC 0.1413 +-0.0007  d=8 lr=0.049 mcw=135.3 sub=0.78 col=0.66 l2=4.7 -> [74, 89, 112] trees, 163s
+  [25/40] PR-AUC 0.1274 +-0.0069  d=8 lr=0.148 mcw=40.0 sub=0.72 col=0.59 l2=1.1 -> [57, 47, 28] trees, 116s
+  [26/40] PR-AUC 0.1231 +-0.0044  d=9 lr=0.093 mcw=7.4 sub=0.99 col=0.63 l2=17.8 -> [139, 52, 52] trees, 166s
+  [27/40] PR-AUC 0.1272 +-0.0053  d=8 lr=0.017 mcw=1.8 sub=0.67 col=0.42 l2=6.8 -> [56, 18, 159] trees, 160s
+  [28/40] PR-AUC 0.1306 +-0.0029  d=7 lr=0.044 mcw=6.5 sub=0.82 col=0.51 l2=4.4 -> [145, 181, 46] trees, 197s
+  [29/40] PR-AUC 0.1252 +-0.0040  d=7 lr=0.036 mcw=8.8 sub=0.69 col=0.40 l2=2.9 -> [326, 7, 53] trees, 204s
+  [30/40] PR-AUC 0.1362 +-0.0084  d=5 lr=0.282 mcw=11.4 sub=0.58 col=0.93 l2=32.1 -> [12, 25, 46] trees, 98s
+  [31/40] PR-AUC 0.1414 +-0.0050  d=3 lr=0.177 mcw=21.9 sub=0.67 col=0.54 l2=0.8 -> [91, 75, 72] trees, 136s
+  [32/40] PR-AUC 0.1249 +-0.0030  d=8 lr=0.120 mcw=8.2 sub=0.51 col=0.87 l2=6.6 -> [56, 30, 67] trees, 131s
+  [33/40] PR-AUC 0.1379 +-0.0101  d=8 lr=0.014 mcw=75.7 sub=0.56 col=0.63 l2=2.2 -> [342, 4, 385] trees, 327s
+  [34/40] PR-AUC 0.1299 +-0.0075  d=8 lr=0.128 mcw=39.4 sub=0.79 col=0.43 l2=26.3 -> [61, 50, 22] trees, 118s
+  [35/40] PR-AUC 0.1418 +-0.0005  d=3 lr=0.016 mcw=86.4 sub=0.55 col=0.37 l2=2.6 -> [647, 734, 764] trees, 696s
+  [36/40] PR-AUC 0.1443 +-0.0028  d=7 lr=0.010 mcw=160.4 sub=0.97 col=0.69 l2=0.7 -> [456, 488, 353] trees, 498s
+  [37/40] PR-AUC 0.1331 +-0.0015  d=3 lr=0.028 mcw=27.4 sub=0.79 col=0.32 l2=3.0 -> [390, 424, 423] trees, 426s
+  [38/40] PR-AUC 0.1499 +-0.0076  d=4 lr=0.039 mcw=2.0 sub=0.75 col=0.92 l2=0.8 -> [207, 144, 101] trees, 210s
+  [39/40] PR-AUC 0.1281 +-0.0021  d=9 lr=0.045 mcw=2.4 sub=0.81 col=0.62 l2=11.5 -> [45, 38, 61] trees, 1415s
+  [40/40] PR-AUC 0.1310 +-0.0091  d=9 lr=0.047 mcw=12.0 sub=0.89 col=0.43 l2=27.4 -> [14, 93, 125] trees, 113s
+
+Search took 156.4 min. Best config: {'max_depth': 4, 'learning_rate': 0.039381192705508675, 'subsample': 0.749410274569055, 'colsample_bytree': 0.9241579073169766, 'min_child_weight': 1.9807141123927623, 'reg_lambda': 0.794308923295967}
+  seed 0: PR-AUC 0.1557  utility 0.4743  (207 trees)
+  seed 1: PR-AUC 0.1548  utility 0.4792  (144 trees)
+  seed 2: PR-AUC 0.1392  utility 0.4790  (101 trees)
+  seed 3: PR-AUC 0.1510  utility 0.4870  (261 trees)
+  seed 4: PR-AUC 0.1418  utility 0.4854  (203 trees)
+
+  xgboost  [val]
+    PR-AUC   0.1485 +- 0.0068   <- deciding metric (base rate 1.99%)
+    ROC-AUC  0.8605 +- 0.0020    Brier 0.0181
+    utility  0.4810 +- 0.0046 at threshold 0.0255 (alarms on 17.1% of hours, precision 8.2%, recall 69.8%)
+
+  Top 20 features by gain (sanity check, not inference):
+    0.0774  ICULOS
+    0.0266  FiO2_hours_since
+    0.0198  SBP_measured_yet
+    0.0183  Resp_mean_6h
+    0.0163  icu_surgical
+    0.0152  Temp_mean_6h
+    0.0151  SBP_last
+    0.0136  Resp_mean_24h
+    0.0135  Lactate_last
+    0.0125  Temp_last
+    0.0124  SBP_hours_since
+    0.0122  icu_medical
+    0.0115  Hgb_count_24h
+    0.0113  SBP_max_24h
+    0.0111  Temp_max_6h
+    0.0106  Alkalinephos_hours_since
+    0.0105  DBP_min_6h
+    0.0098  SBP_min_24h
+    0.0096  Temp_min_6h
+    0.0093  Bilirubin_total_hours_since
+
+Wrote reports/step4_xgb.json and models/xgb.json

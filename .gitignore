@@ -38,3 +38,7 @@ env/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# ---- Validation predictions ----
+# Regenerable by the training scripts; needed locally for the Step 6 paired bootstrap.
+reports/*_preds.npy

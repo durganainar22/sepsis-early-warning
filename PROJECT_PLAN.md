@@ -23,8 +23,8 @@ per-row tabular model cannot. This project asks that question under the same rul
 | 1 | Data audit and exploration | done — `notebooks/01_data_audit.ipynb` |
 | 2 | Cohort, labels, prediction times, splits | done — `src/make_cohort.py` |
 | 3 | Features for the tabular models | done — `src/build_features.py` (164 features, causal by test) |
-| 4 | Baselines: logistic regression, XGBoost | next |
-| 5 | Deep learning: GRU on the hourly sequence | |
+| 4 | Baselines: logistic regression, XGBoost | done 2026-09-27 — `src/train_logreg.py`, `src/train_xgb.py` |
+| 5 | Deep learning: GRU on the hourly sequence | next — inputs and script built, timing pending |
 | 6 | Honest benchmark — the only look at the test hospital | |
 | 7 | Interpretation, figures, write-up | |
 
@@ -142,6 +142,35 @@ Each traces to a numbered finding at the end of `notebooks/01_data_audit.ipynb`.
   comparable budget in Step 5.
 - **Rows within a patient are not independent.** Every uncertainty estimate (Step 6
   bootstrap) resamples *patients*, never hours.
+
+## Step 4 results — 2026-09-27 (hospital A validation only)
+
+Base rate 1.99% of scored hours (101,524 val hours, 2,990 patients).
+
+| Model | PR-AUC (decides) | ROC-AUC | Brier | Utility | Alarms / precision / recall |
+|---|---|---|---|---|---|
+| Logistic regression, L2 C=0.01 | 0.1126 | 0.834 | 0.0186 | 0.433 | 18.9% / 7.1% / 67.5% |
+| XGBoost, 5 seeds | **0.1485 ± 0.0068** | 0.861 ± 0.002 | 0.0181 | **0.481 ± 0.005** | 17.1% / 8.2% / 69.8% |
+
+- **XGBoost leads by +0.036 PR-AUC, ~5× its seed sd**, and wins on every other metric too —
+  not a tie, unlike the readmission project. Logreg's PR-AUC is flat across its C grid; the
+  winning trees are shallow (depth 3–4), so the gain comes from interactions a linear fit
+  cannot express. Still validation — the paired bootstrap on test decides in Step 6.
+- **Search: 40 configs × 3 seeds, 156 min.** Winner config 38: depth 4, lr 0.039, subsample
+  0.75, colsample 0.92, min_child_weight 2.0, lambda 0.79, 101–261 trees. Its 3-seed search
+  score (0.1499) held over 5 seeds (0.1485): no measurable winner's curse. The top three
+  configs were within 0.001 of each other.
+- **PR-AUC varies across seeds (0.139–0.156) but utility does not (0.474–0.487)** — the seed
+  noise sits in parts of the ranking the alarm threshold never uses.
+- **Early stopping is jittery:** some low-learning-rate configs stopped at 2–6 trees on one
+  seed, because val aucpr peaks by chance in the first rounds and holds for 50. Noted, not
+  changed mid-search; a minimum-rounds floor would be a protocol change.
+- **Feature gain — carry into Step 7:** `ICULOS` leads by ~3× (0.077 vs 0.027). ICU time is
+  a real risk factor, but septic records also end 9 h after onset (notebook 01), so part of
+  this may be a dataset-construction artifact; check performance within ICULOS bands. Most
+  of the rest are measurement-process features (`FiO2_hours_since`, `SBP_measured_yet`,
+  `*_hours_since`), as with logreg's top coefficients: the models partly learn clinician
+  behaviour, not only physiology.
 
 ## Step 5 decisions — agreed 2026-09-26
 
