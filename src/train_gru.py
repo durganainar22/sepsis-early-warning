@@ -22,10 +22,12 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 import time
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 
@@ -33,6 +35,7 @@ import evaluate as ev
 
 ROOT = Path(__file__).resolve().parents[1]
 SEQ = ROOT / "data" / "processed" / "seq_a.npz"
+FEATS = ROOT / "data" / "processed" / "features_a.parquet"
 MODELS, REPORTS = ROOT / "models", ROOT / "reports"
 
 SEEDS = [0, 1, 2, 3, 4]
@@ -76,10 +79,25 @@ class Data:
         self.pid = z["pid"][keep]
         self.x, self.y, self.sc = z["x"], z["y"], z["scored"]
         self.len = np.array([b - a for a, b in self.slices])
+        self.rows = np.concatenate([np.arange(a, b) for a, b in self.slices])
+        self.keep = self.sc[self.rows]
+
+    def scored_index(self) -> dict:
+        """(pid, hour, y) of every scored hour, in the order predict() emits them."""
+        hour = np.concatenate([np.arange(n) for n in self.len])
+        return {"y": self.y[self.rows][self.keep].astype(int), "hour": hour[self.keep],
+                "pid": np.repeat(self.pid, self.len)[self.keep]}
 
     def batches(self, bs: int, rng: np.random.Generator | None):
-        # Bucket by length so a batch pads to similar lengths; shuffle BATCH order for training.
-        order = np.argsort(self.len, kind="stable")
+        # Bucket by length so a batch pads to similar lengths. For training, patients are
+        # shuffled WITHIN 16-hour length buckets before chunking, so batch membership changes
+        # every epoch - a pure length sort would pair the same patients forever and only
+        # the batch order would be random. Then the batch order is shuffled too.
+        if rng is None:
+            order = np.argsort(self.len, kind="stable")
+        else:
+            perm = rng.permutation(len(self.len))
+            order = perm[np.argsort(self.len[perm] // 16, kind="stable")]
         chunks = [order[i:i + bs] for i in range(0, len(order), bs)]
         if rng is not None:
             rng.shuffle(chunks)
@@ -103,11 +121,7 @@ def predict(model: nn.Module, d: Data) -> dict:
         for r, i in enumerate(idx):
             probs[i] = p[r, :d.len[i]]
     p = np.concatenate(probs)
-    a_rows = np.concatenate([np.arange(a, b) for a, b in d.slices])
-    keep = d.sc[a_rows]
-    hour = np.concatenate([np.arange(n) for n in d.len])
-    return {"p": p[keep], "y": d.y[a_rows][keep].astype(int), "hour": hour[keep],
-            "pid": np.repeat(d.pid, d.len)[keep]}
+    return {"p": p[d.keep], **d.scored_index()}
 
 
 def train_one(cfg: dict, seed: int, tr: Data, va: Data) -> dict:
@@ -139,6 +153,29 @@ def train_one(cfg: dict, seed: int, tr: Data, va: Data) -> dict:
             "n_params": sum(p.numel() for p in model.parameters())}
 
 
+def keep_awake() -> None:
+    """Stop Windows from sleeping while this process runs; reverts when the process exits."""
+    if sys.platform == "win32":
+        import ctypes
+        ctypes.windll.kernel32.SetThreadExecutionState(0x80000000 | 0x00000001)  # CONTINUOUS | SYSTEM_REQUIRED
+
+
+def check_alignment(va: Data) -> None:
+    """GRU val predictions must line up row for row with the tabular models' val rows.
+
+    Step 6 pairs the GRU with XGBoost and logreg patient by patient in a bootstrap; if the
+    two row orders ever drifted apart, the pairing would be silently wrong, not an error.
+    """
+    f = pd.read_parquet(FEATS, columns=["patient_id", "hour", "split", "SepsisLabel"])
+    f = f[f["split"] == "val"]
+    g = va.scored_index()
+    assert len(f) == len(g["y"]), f"row count: features_a val {len(f):,} vs GRU {len(g['y']):,}"
+    assert (f["patient_id"].to_numpy() == g["pid"]).all(), "patient order differs from features_a"
+    assert (f["hour"].to_numpy() == g["hour"]).all(), "hour order differs from features_a"
+    assert (f["SepsisLabel"].to_numpy() == g["y"]).all(), "labels differ from features_a"
+    print(f"alignment check passed: {len(f):,} val hours match features_a row for row", flush=True)
+
+
 def truncation_test(model: nn.Module, d: Data, n: int = 50) -> None:
     """Output at hour k must be identical whether or not hours > k exist."""
     model.eval()
@@ -165,6 +202,7 @@ def main() -> None:
     tr, va = Data(z, "train"), Data(z, "val")
     print(f"train {len(tr.slices):,} patients / {tr.len.sum():,} hours | val {len(va.slices):,} | "
           f"{tr.x.shape[1]} channels", flush=True)
+    check_alignment(va)
 
     rng = np.random.default_rng(SEARCH_SEED)
     if args.time_one:
@@ -175,14 +213,26 @@ def main() -> None:
               f"val PR-AUC {r['pr_auc']:.4f}, {r['n_params']:,} params, cfg {cfg}; truncation test passed")
         return
 
-    trials, t_all = [], time.perf_counter()
+    keep_awake()
+    # Checkpoint after every config: an overnight search should survive a crash or restart.
+    # On resume, configs are still DRAWN from the same rng stream (so config i is identical
+    # to a fresh run) and the finished ones are skipped, not re-sampled.
+    partial = REPORTS / "step5_gru_search.partial.json"
+    trials = json.loads(partial.read_text()) if partial.exists() else []
+    if trials:
+        print(f"resuming: {len(trials)} of {args.n_iter} configs already done", flush=True)
+    t_all = time.perf_counter()
     for i in range(args.n_iter):
         cfg = sample_config(rng); t0 = time.perf_counter()
+        if i < len(trials):
+            assert all(trials[i][k] == v for k, v in cfg.items()), f"checkpoint config {i} differs"
+            continue
         rs = [train_one(cfg, s, tr, va) for s in SEARCH_SEEDS]
         sc = [r["pr_auc"] for r in rs]
         trials.append({**cfg, "pr_auc_mean": float(np.mean(sc)), "pr_auc_sd": float(np.std(sc)),
                        "epochs": [r["epoch"] for r in rs], "n_params": rs[0]["n_params"],
                        "seconds": time.perf_counter() - t0})
+        partial.write_text(json.dumps(trials, indent=2))
         print(f"  [{i + 1:>2}/{args.n_iter}] PR-AUC {np.mean(sc):.4f} +-{np.std(sc):.4f}  "
               f"h={cfg['hidden']}x{cfg['layers']} do={cfg['dropout']:.2f} lr={cfg['lr']:.4f} "
               f"wd={cfg['weight_decay']:.1e} bs={cfg['batch_size']} -> ep {trials[-1]['epochs']}, "
@@ -216,6 +266,7 @@ def main() -> None:
            "best_epoch_per_seed": epochs, "seeds": SEEDS, "val": summary, "trials": trials,
            "note": "Hospital A val only. Internal test and hospital B untouched until Step 6."}
     (REPORTS / "step5_gru.json").write_text(json.dumps(out, indent=2))
+    partial.unlink()  # the full report now holds every trial; a later run starts fresh
     print("\nWrote reports/step5_gru.json and models/gru.pt")
 
 

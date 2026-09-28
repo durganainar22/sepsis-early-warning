@@ -1,0 +1,3 @@
+﻿train 13,950 patients / 550,137 hours | val 2,990 | 88 channels
+alignment check passed: 101,524 val hours match features_a row for row
+one run: 326s, 6 best epoch, val PR-AUC 0.1082, 182,913 params, cfg {'hidden': 128, 'layers': 2, 'dropout': 0.4128578407646253, 'lr': 0.00122125705269984, 'weight_decay': 0.00023819315843853143, 'batch_size': 64}; truncation test passed
