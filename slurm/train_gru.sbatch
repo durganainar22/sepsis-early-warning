@@ -25,6 +25,7 @@ cd "$SLURM_SUBMIT_DIR"
 module load anaconda3            # if this fails: `module avail anaconda` and use the exact name
 eval "$(conda shell.bash hook)"
 conda activate sepsis
+export PYTHONNOUSERSITE=1        # ignore ~/.local site-packages; use only the sepsis env
 
 echo "node $(hostname), $SLURM_CPUS_PER_TASK cpus, started $(date)"
 python -u src/train_gru.py --threads "$SLURM_CPUS_PER_TASK"
